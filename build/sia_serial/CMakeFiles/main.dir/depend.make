@@ -99,7 +99,10 @@ sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/rosconso
 sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/sensor_msgs/JointState.h
 sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/serial/serial.h
 sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/serial/v8stdint.h
+sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/std_msgs/Float64MultiArray.h
 sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/std_msgs/Header.h
+sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/std_msgs/MultiArrayDimension.h
+sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/std_msgs/MultiArrayLayout.h
 sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/std_msgs/String.h
 sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/trajectory_msgs/JointTrajectory.h
 sia_serial/CMakeFiles/main.dir/src/main.cpp.o: /opt/ros/kinetic/include/trajectory_msgs/JointTrajectoryPoint.h

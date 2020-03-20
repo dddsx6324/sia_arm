@@ -3,7 +3,11 @@
 #define DATA_H_INCLUDED
 
 #include<stdio.h>
-
+typedef struct
+{
+    unsigned char com0Recved:1;
+    unsigned char com0Sending:1;
+} BIT;
 typedef struct
 {
 	unsigned short pos : 12;//�������� λ��
@@ -104,6 +108,7 @@ typedef struct
 //void deg2rad(double* orig, double* dest, int i);
 //unsigned char CheckRecData();
 void data_print(unsigned char* buffer, int len);
+void angle_print(double* angle, int len);
 MCMD mCmd;
 SFEED sFeed;
 SPOS sPos;

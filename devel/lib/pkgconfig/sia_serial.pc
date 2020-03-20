@@ -3,6 +3,6 @@ prefix=/home/zzy/sia_arm/devel
 Name: sia_serial
 Description: Description of sia_serial
 Version: 0.0.0
-Cflags: 
-Libs: -L/home/zzy/sia_arm/devel/lib 
-Requires: 
+Cflags: -I/home/zzy/sia_arm/devel/include -I/home/zzy/sia_arm/src/sia_serial/include
+Libs: -L/home/zzy/sia_arm/devel/lib -lsia_serial
+Requires: roscpp serial std_msgs message_runtime

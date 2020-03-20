@@ -5,13 +5,15 @@
 #include "data_record.h"
 #include "data.h"
 #include "sia_7f_arm_control.h"
+#include "Parse.h"
+#include "IK.h"
 #include <string.h>
 #include <ctime>
 #include <stdio.h>
 #include <iostream>
 #include <list>
 
-const double Pi = 3.14159265358979;
+
 const double EPSINON = 1e-5;
 
 unsigned short limitMin_part[7] = { 0x0410,0x0510,0x0410,0x0500,0x0410,0x0010,0x0010 }; 
@@ -45,6 +47,8 @@ char currentJoint_hex[7] = { 0 };  // get current joint values
 //0x06b8
 unsigned short zero[7] = { 0x07a0, 0x0c24, 0x0360, 0x0990, 0x0360,350, 0x0400 }; //0x0790,0x0c10,0x0380,0x0980,0x0470,0x0010,0x0ff0
 unsigned short home[7] = { 0x0380,0x0270,0x0d00,0x0c80,0x0200,0x0600,0x08f0 };// 0x0180,0x0270,0x0d00,0x0c80,0x0200,0x0600,0x08f0  { 0x0f20,0x0020,0x0f80,0x0980,0x0460,0x0a00,0x0ff0 };//{ 0x0f20,0x0020,0x0f80,0x0980,0x0460,0x0a00,0x0ff0 };
+unsigned short hex_now[7] = {0x0010, 0x0010, 0x0010, 0x0010, 0x0010, 0x0010, 0x0010};
+
 double repangle_max[6] = { 60, 40, 20, 45, 40, 90 };
 double repangle_min[6] = { -60, -20, -40, -45, -20, -90 };
 double angle_home[7] = {0,80,-40,60,-20,-80};//{0, 90, -60, 90, 0, -60, 0x0fff };//{1850,1036,212,x,3932}
@@ -76,23 +80,23 @@ extern SPOS  *spos;
 void Slavor_Init(unsigned short *a,int i);
 void Slavor_Init_Freeze(unsigned short *a, int i);
 void getCurrentJoint();
-void Angle_Test(double* test);//
+unsigned short* Angle_Test(double* test);//u
 void Task_Point2Point_deg_all(double* sstart, double* eend, int num, int t);
 void repsend(int i, int t, int loop ,unsigned short num);
 unsigned short *deg2pos_cal(double* deg, unsigned short *ret);
-void Delay(int time); //time*1000 is the seconds you want to delay
-void MoveIt_test(std::list<robotState> PPoints);
 
-extern unsigned char rx_buffer[24];
+void Delay(int time); //time*1000 is the seconds you want to delay
+
+extern double Pi;
+extern uint8_t rx_buffer[1024];
 extern unsigned char sd_buffer[24];
-extern void SD_msg(uint8_t* sd_msg, int n);
-extern void RX_msg(uint8_t* rx_msg, size_t n);
+extern bool SD_msg(uint8_t* sd_msg, int n);
+extern void RX_msg(size_t n);
 extern void SD_dataRecord(MCMD* a, char j, char b, char c, char d);
-extern void RX_dataRecord(MCMD* a, char j, char b, char c, char d);
-extern std::list<robotState> targetPointList;	
+extern void RX_dataRecord(MCMD* a, char j, char b, char c, char d);	
 
 extern void ArrayRecord(double* a, int b);
-
+extern void angle_print(double* angle, int len);
 extern void AngleRecord(double* a, int b); //记录SFEED包中的角度信息
 extern void SPackage_Open();
 extern unsigned char CheckRecData();

@@ -14,17 +14,29 @@ int  shiw[3] = { 0,0,0 }, gew[3] = { 0,0,0 };
 int flag_SD = 0;//0代表没有发送 1代表正在发送
 int flag_RX = 0;//0代表没有接受 1代表正在接受
 
-uint8_t rx_buffer[24];
+volatile BIT Bit;
+int nread = 0;
+unsigned char uart0_receive_ok=0;
+unsigned char len_receive=0;
+unsigned char com0RecvBuf[24];
+uint8_t rx_buffer[1024];
+uint8_t data_tmp[1024];
 uint8_t sd_buffer[24] = {0x4d, 0x01, 0xa0, 0x07, 0x24, 0x0c, 0x60, 0x03, 0x90, 0x09, 0x60, 0x03, 0x5e, 
                          0x01, 0x00, 0x04, 0x14, 0x00, 0x00, 0x2a, 0x13, 0x2c, 0x0d, 0x0a};
-void SD_msg(uint8_t* sd_msg, int n);
-void RX_msg(uint8_t* rx_msg, size_t n);
+bool SD_msg(uint8_t* sd_msg, int n);
+void RX_msg(size_t n);
+void parse();
+unsigned char CheckRecvData();
 //创建一个serial类
 serial::Serial sp;
 
 int open_serial();
 
+
 void SD_dataRecord(MCMD* a, char j, char b, char c, char d);
 void RX_dataRecord(MCMD* a, char j, char b, char c, char d);
+void angle_dataRecord(double* a, char j, char b, char c, char d);
 void sysUsecTime(); 
 char int2char(int num);
+
+extern int j;

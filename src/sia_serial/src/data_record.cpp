@@ -38,7 +38,7 @@ void SD_dataRecord(MCMD* a, char j, char b, char c, char d) //记录数据整体
 	char jj = j + '1';
 	FILE *fp;
     sysUsecTime();
-	char addr[40] = {'D',':','\\','\\',hhour[1],hhour[0],'_',mmin[1],mmin[0],'_',ssec[1],ssec[0],' ','S','D','_','d','a','t','a','_',jj,'_',b,c,d,'.','t','x','t','\0'};
+	char addr[40] = {'D',':','\\','\\',hhour[1],hhour[0],'_',mmin[1],mmin[0],' ','S','D','_','d','a','t','a','_',jj,'_',b,c,d,'.','t','x','t','\0'};
 	fp = fopen(addr, "a+");
 
 	if(fp == NULL)
@@ -65,7 +65,7 @@ void RX_dataRecord(MCMD* a, char j, char b, char c, char d) //
 	char jj = j + '1';
 	FILE *fp;
     sysUsecTime();
-	char addr[40] = {'D',':','\\','\\',hhour[1],hhour[0],'_',mmin[1],mmin[0],'_',ssec[1],ssec[0],' ','R','X','_','d','a','t','a','_',jj,'_',b,c,d,'.','t','x','t','\0'};
+	char addr[40] = {'D',':','\\','\\',hhour[1],hhour[0],'_',mmin[1],mmin[0],' ','R','X','_','d','a','t','a','_',jj,'_',b,c,d,'.','t','x','t','\0'};
 	fp = fopen(addr, "a+");
 
 	if(fp == NULL)
@@ -87,4 +87,29 @@ void RX_dataRecord(MCMD* a, char j, char b, char c, char d) //
 	fclose(fp);
 }
 
+void angle_dataRecord(double* a, char j, char b, char c, char d)
+{
+	char jj = j + '1';
+	FILE *fp;
+    sysUsecTime();
+	char addr[40] = {'D',':','\\','\\',hhour[1],hhour[0],'_',mmin[1],mmin[0],' ','A','N','G','L','E','_',jj,'_',b,c,d,'.','t','x','t','\0'};
+	fp = fopen(addr, "a+");
 
+	if(fp == NULL)
+    {
+        printf("error");
+        exit(1);
+    }
+
+	fprintf(fp, "%02d ", p->tm_hour);
+	fprintf(fp, "%02d ", p->tm_min);
+	fprintf(fp, "%02d.", p->tm_sec);
+	fprintf(fp, "%03d ", (int)tv.tv_usec);
+
+	for (int i = 0; i < 6; i++)
+	{
+		fprintf(fp, "%f ", *(a+i));
+	}	
+	fprintf(fp, "\n");
+	fclose(fp);
+}

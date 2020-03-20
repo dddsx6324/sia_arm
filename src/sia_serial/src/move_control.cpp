@@ -41,10 +41,10 @@ void Slavor_Init(unsigned short *a,int i)
 	}
 
 	  ::memcpy(sd_buffer, &mCmd, sizeof(MCMD));
-	  SD_msg(sd_buffer,24);
-	  if (flag_SD == 1)
+	  //printf("enter Slavor function\n");
+	  if (SD_msg(sd_buffer,24))
 	  {
-		  SD_dataRecord((MCMD*)sd_buffer, i, '1', '0', '0');
+		  SD_dataRecord((MCMD*)sd_buffer, i, '0', '0', '0');
 	  }
 	  data_print(sd_buffer, 24);
 	  //dataRecord(sd_buffer, 24);
@@ -170,10 +170,10 @@ void getCurrentJoint()
 }
 
 
-void Angle_Test(double* test)//
+unsigned short* Angle_Test(double* test)//
 {
-	unsigned short trans_angle[7] = {0x0000,0x0000,0x0000,0x0000,0x0000,0x0010,0x0010};
-	flag_RX = 1;
+	//unsigned short trans_angle[7] = {0x0000,0x0000,0x0000,0x0000,0x0000,0x0010,0x0010};
+	//flag_RX = 1;
 	mCmd.head = 'M';
 	mCmd.END = 0x0A0D;   
 	mCmd.asterisk = '*';
@@ -190,40 +190,49 @@ void Angle_Test(double* test)//
 	mCmd.joint[6].frz = 0;     
 	mCmd.joint[6].mode = 1;  							 
 
-	deg2pos_cal(test,trans_angle);
+	deg2pos_cal(test,hex_now);
 	//trans_angle[3] = 12.17*PPoint3[3]+2480.48;
 
 	for (int i = 0; i<7; i++)
 	{
-		mCmd.joint[i].pos = trans_angle[i]; 
+
+		mCmd.joint[i].pos = hex_now[i]; 
 	}
 
 	  ::memcpy(sd_buffer, &mCmd, sizeof(MCMD));
-	  SD_msg(sd_buffer, 24);
+	  
 	  //SD_msg(sd_buffer,sizeof(MCMD));
-	 if (flag_SD == 1)
+	 if (SD_msg(sd_buffer, 24))
 	  {
-		  SD_dataRecord((MCMD*)sd_buffer, 7, '0', '0', '0');
+		  //SD_dataRecord((MCMD*)sd_buffer, 6, '0', '0', '0');
+		  //angle_print(test,6);
+		  data_print(sd_buffer, 24);
+		  //angle_dataRecord(test, 6, '0', '0', '0');
 	  }
 	  //ROS_INFO("arm recv: %f %f %f %f %f %f ,duration: %f", rs.j[0],rs.j[1],rs.j[2],rs.j[3],rs.j[4],rs.j[5],rs.duration);
-	  data_print(sd_buffer, 24);
 	  
-
-	Delay(100);      
+	Delay(500);      
 	mCmd.Frz = 1;   
+
+	return hex_now;
 }
 
 
-void MoveIt_test(std::list<robotState> PPoints)
+void MoveIt_test(std::list<std_msgs::Float64MultiArray> PPoints)
 {
 	int n = 0;
+	double sdata[6];
 	if(n = PPoints.size()<=0)
 		return;
 	else
 	{
-		for(std::list<robotState>::iterator it=PPoints.begin();it!=PPoints.end();++it)
+		for(std::list<std_msgs::Float64MultiArray>::iterator it=PPoints.begin();it!=PPoints.end();++it)
 		{
-			Angle_Test((*it).j);
+			for(int i=0;i<6;i++)
+			{
+				sdata[i] = (*it).data[i];
+			}
+			Angle_Test(sdata);
 		}
 	}
 }

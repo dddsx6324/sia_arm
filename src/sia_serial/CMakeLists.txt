@@ -2,18 +2,22 @@ cmake_minimum_required(VERSION 2.8.3)
 project(sia_serial)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  message_generation
   roscpp
   serial
   std_msgs
   actionlib
   actionlib_msgs
   moveit_msgs
+  geometry_msgs
+  trajectory_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -57,11 +61,13 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(FILES
+  EeDelta.srv
+  EeTraj.srv
+  EeRPY.srv
+  EePose.srv
+  JointTraj.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -71,10 +77,9 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(DEPENDENCIES
+  std_msgs geometry_msgs trajectory_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,10 +111,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES sia_serial
-#  CATKIN_DEPENDS roscpp serial std_msgs
-#  DEPENDS system_lib
+  INCLUDE_DIRS include
+  LIBRARIES sia_serial
+  CATKIN_DEPENDS roscpp serial std_msgs message_runtime
+  DEPENDS system_lib
 )
 
 ###########
@@ -229,10 +234,56 @@ link_directories(
   ${catkin_LIB_DIRS} ~/sia_arm/devel/lib
 )
 
+add_library(move_control
+  src/move_control.cpp
+)
+
+#add_executable(mmove_control
+#  src/move_control.cpp
+#)
+add_dependencies(move_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(move_control
+  ${catkin_LIBRARIES}
+)
+
+
+add_library(data
+  src/data.cpp
+)
+target_link_libraries(move_control
+  ${catkin_LIBRARIES} data 
+)
+target_link_libraries(move_control
+  ${catkin_LIBRARIES} sia_7f_arm_control 
+)
+
+add_library(Parse
+  src/Parse.cpp
+)
+add_dependencies(Parse ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(Parse
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(move_control
+  ${catkin_LIBRARIES} Parse
+)
+
+
+add_library(IK
+  src/IK.cpp
+)
+add_dependencies(IK ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(IK
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(IK
+  ${catkin_LIBRARIES} Parse 
+)
 
 add_library(sia_7f_arm_control
   src/actionServer.cpp
 )
+
 add_executable(actionServer
   src/actionServer.cpp
 )
@@ -245,43 +296,18 @@ target_link_libraries(actionServer
   ${catkin_LIBRARIES} sia_7f_arm_control
 ) 
 
-add_library(move_control
-  src/move_control.cpp
+target_link_libraries(actionServer
+  ${catkin_LIBRARIES} serialport
+)
+target_link_libraries(actionServer
+  ${catkin_LIBRARIES} move_control
+)
+target_link_libraries(actionServer
+  ${catkin_LIBRARIES} IK
+)
+target_link_libraries(actionServer
+  ${catkin_LIBRARIES} Parse
 )
 
-#add_executable(move_control
-#  src/move_control.cpp
-#)
-add_dependencies(move_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(move_control
-  ${catkin_LIBRARIES}
-)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -msse3 -std=c++11")
 
-add_executable(main
-  src/main.cpp
-)
-add_dependencies(main ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(main
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(main
-  ${catkin_LIBRARIES} move_control 
-) 
-target_link_libraries(main
-  ${catkin_LIBRARIES} serialport 
-)
-target_link_libraries(main
-  ${catkin_LIBRARIES} sia_7f_arm_control
-) 
-
-
-add_library(data
-  src/data.cpp
-)
-target_link_libraries(move_control
-  ${catkin_LIBRARIES} data 
-)
-target_link_libraries(move_control
-  ${catkin_LIBRARIES} sia_7f_arm_control 
-)

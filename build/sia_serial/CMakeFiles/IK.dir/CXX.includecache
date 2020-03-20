@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/zzy/sia_arm/src/sia_serial/include/IK.h
+stdio.h
+-
+stdlib.h
+-
+unistd.h
+-
+sys/types.h
+-
+sys/stat.h
+-
+errno.h
+-
+string.h
+-
+vector
+-
+math.h
+-
+iostream
+-
+fstream
+-
+iomanip
+-
+
+/home/zzy/sia_arm/src/sia_serial/include/Parse.h
+Eigen/Dense
+-
+iostream
+-
+
+/home/zzy/sia_arm/src/sia_serial/src/IK.cpp
+IK.h
+/home/zzy/sia_arm/src/sia_serial/src/IK.h
+Parse.h
+/home/zzy/sia_arm/src/sia_serial/src/Parse.h
+

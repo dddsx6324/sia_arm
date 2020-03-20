@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(sia_serial_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT " " STREQUAL " ")
+if(NOT "include " STREQUAL " ")
   set(sia_serial_INCLUDE_DIRS "")
-  set(_include_dirs "")
+  set(_include_dirs "include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -116,7 +116,7 @@ if(NOT " " STREQUAL " ")
   endforeach()
 endif()
 
-set(libraries "")
+set(libraries "sia_serial")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -131,7 +131,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/zzy/sia_arm/install/lib;/home/zzy/catkin_fetch/devel/lib;/opt/ros/kinetic/lib)
+    foreach(path /home/zzy/sia_arm/install/lib;/opt/ros/kinetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -154,7 +154,7 @@ foreach(library ${libraries})
   endif()
 endforeach()
 
-set(sia_serial_EXPORTED_TARGETS "")
+set(sia_serial_EXPORTED_TARGETS "sia_serial_generate_messages_cpp;sia_serial_generate_messages_eus;sia_serial_generate_messages_lisp;sia_serial_generate_messages_nodejs;sia_serial_generate_messages_py")
 # create dummy targets for exported code generation targets to make life of users easier
 foreach(t ${sia_serial_EXPORTED_TARGETS})
   if(NOT TARGET ${t})
@@ -162,7 +162,7 @@ foreach(t ${sia_serial_EXPORTED_TARGETS})
   endif()
 endforeach()
 
-set(depends "")
+set(depends "roscpp;serial;std_msgs;message_runtime")
 foreach(depend ${depends})
   string(REPLACE " " ";" depend_list ${depend})
   # the package name of the dependency must be kept in a unique variable so that it is not overwritten in recursive calls
@@ -191,7 +191,7 @@ foreach(depend ${depends})
   list(APPEND sia_serial_EXPORTED_TARGETS ${${sia_serial_dep}_EXPORTED_TARGETS})
 endforeach()
 
-set(pkg_cfg_extras "")
+set(pkg_cfg_extras "sia_serial-msg-extras.cmake")
 foreach(extra ${pkg_cfg_extras})
   if(NOT IS_ABSOLUTE ${extra})
     set(extra ${sia_serial_DIR}/${extra})

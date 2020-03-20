@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/zzy/sia_arm/src/sia_serial/include/Parse.h
+Eigen/Dense
+-
+iostream
+-
+
+/home/zzy/sia_arm/src/sia_serial/src/Parse.cpp
+Parse.h
+/home/zzy/sia_arm/src/sia_serial/src/Parse.h
+
